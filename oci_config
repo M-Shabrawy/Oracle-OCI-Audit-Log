@@ -1,0 +1,7 @@
+[DEFAULT]
+user=ocid1.user.oc1..
+fingerprint=a1:4c:ad:7c:e3:24:11:a6:24:89:62:71:02:ea:69:37
+key_file=./oci_api_key.pem
+tenancy=ocid1.tenancy.oc1..
+region=me-jeddah-1
+pass_phrase=passphrase
