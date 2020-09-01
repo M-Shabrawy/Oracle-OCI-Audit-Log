@@ -104,8 +104,7 @@ def write_log(log_file_name,message):
         
 
 def main():
-    try:
-        
+    try:    
         # Check Base path exists
         check_path(base_path)
         config = oci.config.from_file("./config.txt","DEFAULT")
@@ -123,9 +122,7 @@ def main():
         compartments = get_compartments(identity, tenancy_id)
         write_log(log_file_name,"Found {0!s} Compartments in Tenant {1}".format(len(compartments),tenancy_id))
         #Initialize audit client
-        audit = oci.audit.audit_client.AuditClient(config)
-
-        
+        audit = oci.audit.audit_client.AuditClient(config) 
         
         for r in regions:
             #  Intialize with a region value.
@@ -170,7 +167,12 @@ def main():
                     print("No audit for Compartment {0}".format(c))
                 
     except OSError as err:
-        write_log(log_file_name,"File Error {0}" .format(err))
+        write_log(log_file_name,"OS Error {0}" .format(err))
+    except ValueError:
+        write_log(log_file_name,"Could not convert data.")
+    except:
+        write_log(log_file_name,"Unexpected error: {0}".format(sys.exc_info()[0]))
+        raise
 
 if __name__ == "__main__":
     main()
