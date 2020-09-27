@@ -87,9 +87,9 @@ def cleanup_log(file_name, max_size):
             if s > max_size:
                 os.remove(file_name)
             else:
-                print("Log File Size {0}".format(s))
+                print(f"Log File Size {s}")
     except OSError as err:
-        write_log(log_file_name,"File Error {0}" .format(err))
+        write_log(log_file_name,f"File Error {err}")
 
 
 def write_log(log_file_name,message):
@@ -100,7 +100,7 @@ def write_log(log_file_name,message):
         lf.write(msg)
         lf.close
     except OSError as err:
-        print ("Log file error {0}".format(err))
+        print (f"Log file error {err}")
         
 
 def main():
@@ -117,10 +117,10 @@ def main():
         
         #Subscription Regions
         regions = get_subscription_regions(identity, tenancy_id)
-        write_log(log_file_name,"Found {0!s} Regions in Tenant {1}".format(len(regions),tenancy_id))
+        write_log(log_file_name,f"Found {len(regions)} Regions in Tenant {tenancy_id}")
         #Get Compartments
         compartments = get_compartments(identity, tenancy_id)
-        write_log(log_file_name,"Found {0!s} Compartments in Tenant {1}".format(len(compartments),tenancy_id))
+        write_log(log_file_name,f"Found {len(compartments)} Compartments in Tenant {tenancy_id}")
         #Initialize audit client
         audit = oci.audit.audit_client.AuditClient(config) 
         
@@ -147,31 +147,31 @@ def main():
                     c,
                     start_time,
                     end_time)
-                write_log(log_file_name,"Found {0!s} Events in CompartmentID {1} Region {2}".format(len(audit_events),c,r))
+                write_log(log_file_name,f"Found {len(audit_events)} Events in CompartmentID {c} Region {r}")
                 
                 if audit_events:
                     of = open(audit_file,"a")
                     for e in audit_events:
-                        record = str(e.event_time) + ",compartment_name=" + str(e.data.compartment_name) + ",principal_name=" + str(e.data.identity.principal_name) + ",ip_address=" + str(e.data.identity.ip_address) + ",event_name=" + str(e.data.event_name) + ",source=" + str(e.source) + ",request.action=" + str(e.data.request.action) + ",response.status=" + str(e.data.response.status) + ",response.message=" + str(e.data.response.message) + "\n"
+                        record = f"{str(e.event_time)},compartment_name={str(e.data.compartment_name)},principal_name={str(e.data.identity.principal_name)},ip_address={str(e.data.identity.ip_address)},event_name={str(e.data.event_name)},source={str(e.source)},request.action={str(e.data.request.action)},response.status={str(e.data.response.status)},response.message={str(e.data.response.message)}\n"
                         of.write(record)
                         #Get last event timestamp and write to state
                         state = str(e.event_time)
                     if state == "":
-                        write_log(log_file_name,"Null state error for Compartment {0}".format(c))
+                        write_log(log_file_name,f"Null state error for Compartment {c}")
                     else:
                         sf = open(state_file,"w")
                         sf.write(state)
                         sf.close
                     of.close
                 else:
-                    print("No audit for Compartment {0}".format(c))
+                    print(f"No audit for Compartment {c}")
                 
     except OSError as err:
-        write_log(log_file_name,"OS Error {0}" .format(err))
+        write_log(log_file_name,f"OS Error {err}")
     except ValueError:
         write_log(log_file_name,"Could not convert data.")
     except:
-        write_log(log_file_name,"Unexpected error: {0}".format(sys.exc_info()[0]))
+        write_log(log_file_name,f"Unexpected error: {sys.exc_info()[0]}")
         raise
 
 if __name__ == "__main__":
